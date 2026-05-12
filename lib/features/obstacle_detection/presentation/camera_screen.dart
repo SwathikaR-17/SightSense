@@ -1,6 +1,8 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
+import '../services/tts_service.dart';
+
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
 
@@ -9,6 +11,9 @@ class CameraScreen extends StatefulWidget {
 }
 
 class _CameraScreenState extends State<CameraScreen> {
+
+  final TTSService ttsService = TTSService();
+
   CameraController? _cameraController;
   List<CameraDescription>? cameras;
   bool isCameraInitialized = false;
@@ -28,6 +33,10 @@ class _CameraScreenState extends State<CameraScreen> {
     );
 
     await _cameraController!.initialize();
+
+    await ttsService.speak(
+      "Camera initialized successfully",
+    );
 
     if (!mounted) return;
 
