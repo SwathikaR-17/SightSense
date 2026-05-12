@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'features/obstacle_detection/presentation/camera_screen.dart';
 
 void main() {
   runApp(const SightSenseApp());
@@ -13,7 +14,7 @@ class SightSenseApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'SightSense',
       theme: ThemeData.dark(),
-      home: const HomeScreen(),
+      home: CameraScreen(),
     );
   }
 }
