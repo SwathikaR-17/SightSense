@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import '../services/tts_service.dart';
 import 'dart:async';
+import '../services/ai_service.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
@@ -13,6 +14,7 @@ class CameraScreen extends StatefulWidget {
 class _CameraScreenState extends State<CameraScreen> {
 
   final TTSService ttsService = TTSService();
+  final AIService aiService = AIService();
   Timer? obstacleTimer;
   CameraController? _cameraController;
   List<CameraDescription>? cameras;
@@ -25,7 +27,14 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
   Future<void> initializeCamera() async {
+
+  try {
+
+    print("Getting cameras...");
+
     cameras = await availableCameras();
+
+    print("Initializing controller...");
 
     _cameraController = CameraController(
       cameras![0],
@@ -34,9 +43,18 @@ class _CameraScreenState extends State<CameraScreen> {
 
     await _cameraController!.initialize();
 
+    print("Camera initialized");
+
+    print("Loading AI model...");
+
+    await aiService.loadModel();
+
+    print("AI model loaded");
+
     await ttsService.speak(
       "Camera initialized successfully",
     );
+
     startObstacleSimulation();
 
     if (!mounted) return;
@@ -44,7 +62,13 @@ class _CameraScreenState extends State<CameraScreen> {
     setState(() {
       isCameraInitialized = true;
     });
+
+  } catch (e) {
+
+    print("ERROR: $e");
+
   }
+}
 
 void startObstacleSimulation() {
 
@@ -52,8 +76,12 @@ void startObstacleSimulation() {
     const Duration(seconds: 8),
     (timer) async {
 
+      print("CHECKING AI");
+
+      aiService.runFakeDetection();
+
       await ttsService.speak(
-        "Obstacle detected ahead. Move slightly to the left.",
+        "AI detection running",
       );
 
     },
